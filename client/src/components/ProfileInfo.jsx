@@ -25,7 +25,7 @@ const ProfileInfo = ({ user, posts, profileId, setShowEdit }) => {
                   </div>
                   {/* if user is not others profile thats means he is opening his profile so we will give edit button */}
                   {!profileId && 
-                    <button onClick={() => setShowEdit(true)} className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors mt-4 md:mt-0 cursor-pointer"> 
+                    <button onClick={() => setShowEdit((prev) => !prev)} className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors mt-4 md:mt-0 cursor-pointer"> 
                       <PenBox className="w-4 h-4"/>
                     Edit
                     </button>}

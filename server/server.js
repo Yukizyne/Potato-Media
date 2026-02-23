@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import connectDb  from './configs/db';
+import connectDb  from './configs/db.js';
 import { inngest, functions } from './Inggest/index.js';
 import { serve } from 'inngest/express';
 
@@ -10,7 +10,7 @@ const app = express();
 await connectDb();
 
 app.use(express.json());
-app.unsubscribe(cors());
+app.use(cors());
 
 app.get('/', (req,res)=> res.send('server is running'))
 app.use('/api/inngest', serve({client: inngest, functions}))

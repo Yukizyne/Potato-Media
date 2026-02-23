@@ -20,7 +20,7 @@ const StoriesBar = () => {
   },[])
 
   return (
-    <div className="w-full sm:w-[calc(100vw-240px)] lg:max-w-2xl overflow-x-auto no-scrollbar">
+    <div className="w-full max-w-2xl overflow-x-auto no-scrollbar">
       <div className="flex items-stretch gap-4 pb-5">
           {/* Add Story Card */}
           <div onClick={() => setShowModal(true)} className="rounded-lg shadow-sm min-w-[120px] max-w-[120px] max-h-40 aspect-[3/4] cursor-pointer hover:shadow-lg transition-all duration-200 border-2 border-dashed border-indigo-300 bg-gradient-to-b from-indigo-50 to-white">

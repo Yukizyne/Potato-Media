@@ -26,9 +26,9 @@ export const menuItemsData = [
 export const dummyUserData = {
     "_id": "user_2zdFoZib5lNr614LgkONdD8WG32",
     "email": "admin@example.com",
-    "full_name": "pokwang",
-    "username": "Cholo",
-    "bio": "🌍 Dreamer | 📚 Learner | 🚀 Doer\r\nExploring life one step at a time.\r\n✨ Staying curious. Creating with purpose.",
+    "full_name": "Catherine",
+    "username": "Pandak",
+    "bio": "Pandak cuteess",
     "profile_picture": sample_profile,
     "cover_photo": sample_cover,
     "location": "New York, NY",

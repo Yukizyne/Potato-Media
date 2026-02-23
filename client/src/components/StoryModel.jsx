@@ -4,7 +4,9 @@ import toast from "react-hot-toast";
 
 const StoryModel = ({setShowModal, fetchStories}) => {
 
-  const bgColors = ["#4f46e5", "#7c3aed", "#db2777", "#e11d48", "#ca8a04", "#0d9488", "#000000", "#764326"]
+  const bgColors = ["#4f46e5", "#7c3aed", "#db2777", "#e11d48", "#ca8a04", "#0d9488", "#000000", "#764326",
+    "#816752", "#ffffff"
+  ]
 
   const [mode, setMode] = useState("text")
   const [background, setBackground] = useState(bgColors[0])

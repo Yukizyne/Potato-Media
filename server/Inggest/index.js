@@ -2,7 +2,6 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Connection from "../models/connection.js";
 import sendEmail from "../configs/nodeMailer.js";
-import { connect } from "mongoose";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "potato-app" });
@@ -78,6 +77,9 @@ const sendNewConnectionRequestReminder = inngest.createFunction(
     await step.sleepUntil("wait-for-24-hours", in24Hours);
     await step.run('send-connection-request-reminder', async () => {
       const connection = await Connection.findById(connectionId).populate('from_user_id to_user_id');
+      if (!connection || !connection.from_user_id || !connection.to_user_id) {
+        return { message: "Connection not found" };
+      }
 
       if(connection.status === 'accepted'){
         return {message: 'Already Accepted'}

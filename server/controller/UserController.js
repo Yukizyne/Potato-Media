@@ -1,8 +1,9 @@
 // Get user data using userID
 import fs from "fs";
 import imagekit from "../configs/imageKit.js";
-import Connection from "../models/connection.js";
+import Connection from "../models/Connection.js";
 import User from "../models/User.js";
+import { inngest } from "../Inggest/index.js";
 
 export const getUserData = async (req, res) => {
   try {
@@ -118,6 +119,10 @@ export const followUser = async (req, res) => {
     const { userId } = await req.auth();
     const { id } = req.body;
 
+    if (!id || id === userId) {
+      return res.json({ success: false, message: "Invalid target user" });
+    }
+
     const user = await User.findById(userId);
     const toUser = await User.findById(id);
 
@@ -149,6 +154,10 @@ export const unfollowUser = async (req, res) => {
     const { userId } = await req.auth();
     const { id } = req.body;
 
+    if (!id || id === userId) {
+      return res.json({ success: false, message: "Invalid target user" });
+    }
+
     const user = await User.findById(userId);
     const toUser = await User.findById(id);
 
@@ -169,14 +178,19 @@ export const unfollowUser = async (req, res) => {
   }
 };
 
-// send connetion request
-export const sendConnetionRequest = async (req, res) => {
+// Send connection request
+export const sendConnectionRequest = async (req, res) => {
   try {
     const { userId } = await req.auth();
     const { id } = req.body;
 
     if (!id || id === userId) {
       return res.json({ success: false, message: "Invalid target user" });
+    }
+
+    const toUser = await User.findById(id);
+    if (!toUser) {
+      return res.json({ success: false, message: "User not found" });
     }
 
     // Check if user has sent more than 20 connection request in the last 24 hours
@@ -201,10 +215,20 @@ export const sendConnetionRequest = async (req, res) => {
     });
 
     if (!existingConnection) {
-      await Connection.create({
+      const connection = await Connection.create({
         from_user_id: userId,
         to_user_id: id,
       });
+
+      try {
+        await inngest.send({
+          name: "app/connection-request",
+          data: { connectionId: connection._id.toString() },
+        });
+      } catch (eventError) {
+        console.error("Failed to send Inngest event:", eventError.message);
+      }
+
       return res.json({ success: true, message: "Connection request sent successfully" });
     } else if (existingConnection.status === "accepted") {
       return res.json({ success: false, message: "You are already connected with this user" });
@@ -217,8 +241,8 @@ export const sendConnetionRequest = async (req, res) => {
   }
 };
 
-// Get user connection
-export const getUserConnetion = async (req, res) => {
+// Get user connections
+export const getUserConnection = async (req, res) => {
   try {
     const { userId } = await req.auth();
     const user = await User.findById(userId).populate("connections followers");
@@ -251,6 +275,9 @@ export const acceptConnectionRequest = async (req, res) => {
     if (!connectionDoc) {
       return res.json({ success: false, message: "Connection not found" });
     }
+    if (connectionDoc.status === "accepted") {
+      return res.json({ success: false, message: "Connection already accepted" });
+    }
 
     const user = await User.findById(userId);
     const toUser = await User.findById(id);
@@ -271,3 +298,7 @@ export const acceptConnectionRequest = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// Backward-compatible aliases for existing imports.
+export const sendConnetionRequest = sendConnectionRequest;
+export const getUserConnetion = getUserConnection;

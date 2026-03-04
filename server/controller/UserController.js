@@ -1,7 +1,7 @@
 // Get user data using userID
 import fs from "fs";
 import imagekit from "../configs/imageKit.js";
-import Connection from "../models/Connection.js";
+import Connection from "../models/connection.js";
 import User from "../models/User.js";
 import { inngest } from "../Inggest/index.js";
 
@@ -51,7 +51,10 @@ export const updateUserData = async (req, res) => {
     const cover = req.files?.cover?.[0];
 
     if (profile) {
-      const buffer = fs.readFileSync(profile.path);
+      const buffer = profile.buffer ?? (profile.path ? fs.readFileSync(profile.path) : null);
+      if (!buffer) {
+        return res.json({ success: false, message: "Invalid profile upload payload" });
+      }
       const response = await imagekit.upload({
         file: buffer,
         fileName: profile.originalname,
@@ -65,7 +68,10 @@ export const updateUserData = async (req, res) => {
     }
 
     if (cover) {
-      const buffer = fs.readFileSync(cover.path);
+      const buffer = cover.buffer ?? (cover.path ? fs.readFileSync(cover.path) : null);
+      if (!buffer) {
+        return res.json({ success: false, message: "Invalid cover upload payload" });
+      }
       const response = await imagekit.upload({
         file: buffer,
         fileName: cover.originalname,
